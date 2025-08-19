@@ -1,0 +1,139 @@
+<!-- templates/crop.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Crop Yield Predictor</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-green-100 to-white min-h-screen text-gray-800">
+
+  <div class="max-w-xl mx-auto py-10 px-6">
+    <h1 class="text-3xl font-bold mb-6 text-center text-green-800">
+      🌾 Crop Yield Prediction/పంట దిగుబడి అంచనా/फसल उत्पादन की भविष्यवाणी
+    </h1>
+
+    {% if error %}
+      <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+        {{ error }}
+      </div>
+    {% endif %}
+
+    <form action="/predict" method="POST" class="bg-white p-6 rounded-2xl shadow-lg space-y-4">
+      <div>
+        <label class="block font-semibold">Temperature/ఉష్ణోగ్రతం/तापमान (°C)</label>
+        <input type="number" step="any" name="temperature" class="w-full border rounded-lg px-3 py-2" required />
+      </div>
+
+      <div>
+        <label class="block font-semibold">Rainfall/వర్షపాతం/वर्षा (mm)</label>
+        <input type="number" step="any" name="rainfall" class="w-full border rounded-lg px-3 py-2" required />
+      </div>
+
+      <div>
+        <label class="block font-semibold">Soil pH/మట్టి పిహెచ్/मिट्टी का पीएच</label>
+        <input type="number" step="any" name="soil_ph" class="w-full border rounded-lg px-3 py-2" required />
+      </div>
+
+      <!-- Keep your existing area, crop, soil, season fields -->
+      <!-- NOTE: These must be handled in app.py if you want to use them for prediction -->
+      <!-- For now, they are optional visual fields -->
+
+      <!-- Area -->
+      <div>
+        <label class="block font-semibold">Area/విస్తీర్ణం/क्षेत्रफल  </label>
+        <div class="flex space-x-3">
+            <input type="number" step="any" name="area" placeholder="Enter area" class="flex-1 border rounded-lg px-3 py-2" required />
+            <select name="areaUnit" class="w-32 border rounded-lg px-3 py-2">
+            <option value="hectares">Hectares/హెక్టార్లు/हेक्टेयर</option>
+            <option value="acres">Acres/ఎకరాలు/एकड़</option>
+            <option value="squareKilometers">Square Kilometers/చతురస్ర కిలోమీటర్లు/वर्ग किलोमीटर</option>
+            <option value="squareMeters">Square Meters/చతురస్ర మీటర్లు/वर्ग मीटर</option>
+            <option value="squareFeet">Square Feet/చతురస్ర అడుగులు/वर्ग फुट</option>
+            <option value="cents">Cents/సెంట్లు/सेंट</option>
+            <option value="bighas">Bighas/బిఘాలు/बीघा</option>
+            <option value="roods">Roods/రూడ్స్/रूड</option>
+            <option value="perches">Perches/పెర్చెస్/पर्चेस</option>
+            <option value="poles">Poles/పోల్స్/पोल</option >
+            <option value="yards">Yards/యార్డులు/यार्ड</option>
+            <option value="miles">Miles/మైళ్లు/मील</option>
+            <option value="kilometers">Kilometers/కిలోమీటర్లు/किलोमीटर</option>     
+            <option value="rods">Rods/రోడ్స్/रॉड</option>
+            <option value="chains">Chains/చెయిన్‌లు/चेन</option>  
+            </select>
+        </div>
+    </div>
+      </div>
+
+      <!-- Crop -->
+      <div>
+        <label class="block font-semibold">Crop Type/పంట రకం/फसल प्रकार</label>
+        <select name="crop" class="w-full border rounded-lg px-3 py-2">
+          <option value="rice">Rice/బియ్యం/चावल</option>
+          <option value="wheat">Wheat/గోధుమ/गेहूँ</option>
+          <option value="maize">Maize/మక్కజొన్న/मक्का</option>
+          <option value="cotton">Cotton/పత్తి/कपास</option>
+          <option value="sugarcane">Sugarcane/చక్కెర కంచు/गन्ना</option>
+          <option value="soybean">Soybean/సోయాబీన్/सोयाबीन</option>
+          <option value="barley">Barley/జొన్న/जौ</option>
+          <option value="pulses">Pulses/పప్పులు/दालें</option>
+          <option value="groundnut">Groundnut/గోధుమకాయలు/मूंगफली</option>
+          <option value="millets">Millets/జొన్నలు/बाजरा</option>
+          <option value="tobacco">Tobacco/తంబాకూ/तंबाकू</option>
+          <option value="oilseeds">Oilseeds/నూనె పంటలు/तेल बीज</option>
+          <option value="fruits">Fruits/పండ్లు/फल</option>
+          <option value="vegetables">Vegetables/కూరగాయలు/सब्जियाँ</option>
+          <option value="other">Other/ఇతర/अन्य</option>
+        </select>
+      </div>
+
+
+      <!-- Soil -->
+       <div>
+        <label class="block font-semibold">Soil Type/మట్టి రకం/मिट्टी का प्रकार </label>
+        <select name="soil" class="w-full border rounded-lg px-3 py-2">
+          <option value="clay">Clay/చప్పటి మట్టి/चिकनी मिट्टी</option>
+          <option value="sandy">Sandy/ఇసుక మట్టి/रेतीली मिट्टी</option>
+          <option value="loamy">Loamy/లోమీ మట్టి/दोमट मिट्टी</option>
+          <option value="black">Black/నలుపు మట్టి/काली मिट्टी</option>
+          <option value="alluvial">Alluvial/అల్లువియల్ మట్టి/जलोढ़ मिट्टी</option>
+          <option value="red">Red/ఎరుపు మట్టి/लाल मिट्टी</option>
+          <option value="mixed">Mixed/మిశ్రoతి/मिश्रित मिट्टी</option>
+          <option value="saline">Saline/ఉప్పు మట్టి/खारी मिट्टी</option>
+          <option value="peaty">Peaty/పీటీ మట్టి/पीटी मिट्टी</option>
+          <option value="chalky">Chalky/చాకీ మట్టి/चाक मिट्टी</option>
+          <option value="silty">Silty/సిల్టీ మట్టి/सिल्ट मिट्टी</option>  
+          <option value="gravelly">Gravelly/గవ్వల మట్టి/कंकरीली मिट्टी</option> 
+        </select>
+      </div>
+
+      <!-- Season -->
+      <div>
+        <label class="block font-semibold">Season/కాలం/ऋतु</label>
+        <select name="season" class="w-full border rounded-lg px-3 py-2">
+          <option value="kharif">Kharif/ఖరీఫ్/खरीफ</option>
+          <option value="rabi">Rabi/రబీ/रबी </option>
+          <option value="summer">Summe/వేసవి/गर्मी</option>
+          <option value="winter">Winter/చలికాలం/सर्दी</option>
+          <option value="monsoon">Monsoon/మోన్సూన్/मानसून</option>
+          <option value="autumn">Autumn/శరద్/पतझड़</option>
+          <option value="spring">Spring/వసంత/बसंत</option>
+          <option value="pre-monsoon">Pre-Monsoon/ముందు మోన్సూన్/पूर्व मानसून</option>
+          <option value="post-monsoon">Post-Monsoon/తర్వాత మోన్సూన్/पोस्ट मानसून</option>   
+        </select>
+      </div>
+
+      <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded-xl hover:bg-green-700 transition">
+        Predict Yield/పంట దిగుబడి అంచనా/फसल उत्पादन की भविष्यवाणी    
+      </button>
+    </form>
+
+    {% if prediction %}
+      <div class="mt-6 text-center text-xl font-semibold text-green-700">
+        📊 Predicted Yield: <span>{{ prediction }}</span> tons
+      </div>
+    {% endif %}
+  </div>
+</body>
+</html>
